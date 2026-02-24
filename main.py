@@ -26,7 +26,6 @@ def main():
             "No GEMINI_API_KEY was found.")
 
     client = genai.Client(api_key=api_key)
-    print(system_prompt)
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=messages,
