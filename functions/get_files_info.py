@@ -3,9 +3,6 @@ import os
 
 def get_files_info(working_directory, directory="."):
     try:
-        if not isinstance(directory, str):
-            raise Exception(f'"{directory}" is not a directory')
-
         working_dir_abs = os.path.abspath(working_directory)
         target_dir = os.path.normpath(os.path.join(working_dir_abs, directory))
 
@@ -15,17 +12,19 @@ def get_files_info(working_directory, directory="."):
             [working_dir_abs, target_dir]) == working_dir_abs
 
         if not valid_target_dir:
-            raise Exception(
-                f'Cannot list "{directory}" as it is outside the permitted working directory')
+            return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
 
-        directory_contents = os.listdir(target_dir)
+        if not os.path.isdir(target_dir):
+            return f'Error: "{directory}" is not a directory'
+
         results = []
 
-        for item in directory_contents:
+        for item in os.listdir(target_dir):
             item_dir = os.path.join(target_dir, item)
-            item_details = f"- {item}: file_size={os.path.getsize(item_dir)}, is_dir={os.path.isdir(item_dir)}"
+            item_details = f"- {item}: file_size={os.path.getsize(item_dir)} bytes, is_dir={os.path.isdir(item_dir)}"
             results.append(item_details)
 
         return "\n".join(results)
+
     except Exception as e:
-        return f"\tError: {e}"
+        return f"Error listing files: {e}"
