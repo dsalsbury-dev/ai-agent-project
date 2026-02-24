@@ -1,6 +1,9 @@
 # ai-agent-project
 
-A minimal Python CLI chatbot that sends a single prompt to Google Gemini and prints the response.
+A minimal Python CLI chatbot that sends a single prompt to Google Gemini and prints either:
+
+- a requested function call, or
+- a direct text response.
 
 ## Why does this exist?
 
@@ -27,14 +30,57 @@ I am learning about AI chat bots and using this as a learning opportunity to do 
 
 Run the chatbot from [main.py](main.py):
 
+The CLI accepts one required positional argument:
+
+```bash
+python main.py "<your prompt>"
+```
+
+Optional flag:
+
+```bash
+--verbose
+```
+
+In [main.py](main.py), responses are handled in two ways:
+
+1. If the LLM decides a function call is needed, it prints:
+   ```text
+   Calling function: <function_name>({<args>})
+   ```
+2. Otherwise, it prints a plain text response:
+   ```text
+   Response:
+   <model text>
+   ```
+
+### Example prompts
+
+Prompt that typically triggers a function call:
+
+```bash
+python main.py "list the contents of pkg directory"
+```
+
+Example output:
+
+```text
+Calling function: get_files_info({'directory': 'pkg'})
+```
+
+Prompt that typically returns direct text:
+
 ```bash
 python main.py "Write a haiku about coding"
 ```
 
-Enable verbose token output:
+Example output:
 
-```bash
-python main.py "Write a haiku about coding" --verbose
+```text
+Response:
+Code hums in still night,
+Logic blooms in quiet loops,
+Dawn debugs the sky.
 ```
 
 ## Notes
