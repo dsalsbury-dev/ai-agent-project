@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 
 from prompts import system_prompt
-from functions.call_function import available_functions
+from functions.call_function import available_functions, call_function
 
 
 def main():
@@ -43,10 +43,21 @@ def main():
         print(
             f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
+    function_call_results = []
     if response.function_calls:
         for function_call in response.function_calls:
-            print(
-                f"Calling function: {function_call.name}({function_call.args})")
+            function_call_result = call_function(function_call)
+            if not function_call_result.parts:
+                raise Exception("Parts list is empty")
+            if not function_call_result.parts[0].function_response.response:
+                raise Exception("FunctionResponse.response is None")
+            function_call_results.append(
+                function_call_result.parts[0].function_response.response)
+
+            if args.verbose:
+                print(
+                    f"-> {function_call_result.parts[0].function_response.response}")
+
     else:
         print("Response:")
         print(response.text)
